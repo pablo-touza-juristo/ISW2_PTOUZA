@@ -4,6 +4,8 @@ from . import models
 from .forms import RegistroUsuarioForm
 from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 def index(request):
@@ -26,7 +28,7 @@ class CruiseDetailView(generic.DetailView):
     model = models.Cruise
     context_object_name = 'cruise'
 
-class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
+class InfoRequestCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     template_name = 'info_request_create.html'
     model = models.InfoRequest
     fields = ['name', 'email', 'cruise', 'notes']
