@@ -10,6 +10,17 @@ ReleCloud - Registro de usuario
 <h1>Registro de usuario</h1>
 <h2>Completa el formulario para crear tu cuenta</h2>
 
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+{% endif %}
+
 <form method="post">
     {% csrf_token %}
     {{ form|crispy }}

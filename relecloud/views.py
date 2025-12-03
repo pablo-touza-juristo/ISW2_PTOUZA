@@ -34,7 +34,8 @@ class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
     success_message = 'Thank you, %(name)s! We will email you when we have more information about %(cruise)s!'
 
 
-class RegistroUsuarioCreate(generic.CreateView):
+class RegistroUsuarioCreate(SuccessMessageMixin, generic.CreateView):
     template_name = 'registro.html'
     form_class = RegistroUsuarioForm
     success_url = reverse_lazy('index')
+    success_message = '¡Registro exitoso! Bienvenido %(username)s.'
