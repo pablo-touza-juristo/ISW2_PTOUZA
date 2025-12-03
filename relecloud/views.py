@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from . import models
+from .forms import RegistroUsuarioForm
 from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 
@@ -31,3 +32,9 @@ class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
     fields = ['name', 'email', 'cruise', 'notes']
     success_url = reverse_lazy('index')
     success_message = 'Thank you, %(name)s! We will email you when we have more information about %(cruise)s!'
+
+
+class RegistroUsuarioCreate(generic.CreateView):
+    template_name = 'registro.html'
+    form_class = RegistroUsuarioForm
+    success_url = reverse_lazy('index')
