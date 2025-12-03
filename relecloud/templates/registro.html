@@ -7,6 +7,14 @@ ReleCloud - Registro de usuario
 {% endblock title %}
 
 {% block content %}
+{% if user.is_authenticated %}
+<div class="alert alert-info" role="alert">
+    Ya has iniciado sesión como {{ user.username }}.
+</div>
+<p>
+    <a href="{% url 'index' %}" class="btn btn-primary">Volver al inicio</a>
+</p>
+{% else %}
 <h1>Registro de usuario</h1>
 <h2>Completa el formulario para crear tu cuenta</h2>
 
@@ -26,5 +34,9 @@ ReleCloud - Registro de usuario
     {{ form|crispy }}
     <button type="submit" class="btn btn-primary">Registrarse</button>
 </form>
+
+<hr>
+<p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
+{% endif %}
 
 {% endblock content %}

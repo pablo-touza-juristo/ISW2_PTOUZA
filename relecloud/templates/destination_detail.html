@@ -9,6 +9,17 @@ ReleCloud - {{ destination }}
 <p>
 {{ destination.description }}
 </p>
+
+{% if user.is_authenticated %}
+<p>
+    <a href="{% url 'info_request' %}" class="btn btn-primary">Request Information</a>
+</p>
+{% else %}
+<p>
+    <a href="{% url 'login' %}" class="btn btn-primary">Login to Request Information</a>
+</p>
+{% endif %}
+
 <p>You can explore {{ destination }} on the following cruises:</p>
 <ul class="list-group">
     {% for cruise in destination.cruises.all %}

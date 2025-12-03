@@ -7,6 +7,14 @@ ReleCloud - Iniciar sesión
 {% endblock title %}
 
 {% block content %}
+{% if user.is_authenticated %}
+<div class="alert alert-info" role="alert">
+    Ya has iniciado sesión como {{ user.username }}.
+</div>
+<p>
+    <a href="{% url 'index' %}" class="btn btn-primary">Volver al inicio</a>
+</p>
+{% else %}
 <h1>Iniciar sesión</h1>
 <h2>Ingresa tus credenciales para acceder</h2>
 
@@ -29,5 +37,6 @@ ReleCloud - Iniciar sesión
 
 <hr>
 <p>¿No tienes una cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a></p>
+{% endif %}
 
 {% endblock content %}
