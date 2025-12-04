@@ -24,6 +24,7 @@ variables:
   projectRoot: $(System.DefaultWorkingDirectory)
 
   pythonVersion: '3.12'
+  pythonPath: '/usr/bin/python3'
 
 stages:
 - stage: Build
@@ -31,7 +32,7 @@ stages:
   jobs:
   - job: BuildJob
     pool:
-      name: "ISW2_PTOUZA_AgentsPool"
+      name: 'ISW2_PTOUZA_AgentsPool'
     steps:
     - task: UsePythonVersion@0
       inputs:
@@ -39,7 +40,7 @@ stages:
       displayName: 'Use Python $(pythonVersion)'
 
     - script: |
-        python -m venv antenv
+        $(pythonPath) -m venv antenv
         source antenv/bin/activate
         python -m pip install --upgrade pip
         pip install setup
