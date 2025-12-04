@@ -134,4 +134,4 @@ Un destino recién añadido sin reviews aparecerá al final hasta que reciba su 
 - Las reviews deben estar asociadas al destino mediante la relación `reviews` (ForeignKey).
 - La puntuación media se calcula como el promedio aritmético de todas las puntuaciones.
 - Los valores NULL en `avg_rating` se tratarán como menores que cualquier valor numérico.
-- La ordenación se aplica en el queryset antes de enviar los datos a la plantilla.
+- La ordenación se aplica en el queryset antes de enviar los datos a la plantilla
