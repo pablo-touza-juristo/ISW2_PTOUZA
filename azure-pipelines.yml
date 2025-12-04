@@ -15,6 +15,7 @@ variables:
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
+  
 
   # Environment name
   environmentName: 'Practica'
@@ -31,7 +32,6 @@ stages:
   - job: BuildJob
     pool:
       name: "ISW2_PTOUZA_AgentsPool"
-      #vmImage: $(vmImageName)
     steps:
     - task: UsePythonVersion@0
       inputs:
