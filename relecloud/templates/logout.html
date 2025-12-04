@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ReleCloud - Sesión cerrada
+{% endblock title %}
+
+{% block content %}
+<h1>Sesión cerrada</h1>
+<h2>Has cerrado sesión exitosamente</h2>
+
+<div class="alert alert-success" role="alert">
+    Tu sesión ha sido cerrada correctamente.
+</div>
+
+<p>
+    <a href="{% url 'login' %}" class="btn btn-primary">Iniciar sesión nuevamente</a>
+    <a href="{% url 'index' %}" class="btn btn-secondary">Volver al inicio</a>
+</p>
+
+{% endblock content %}

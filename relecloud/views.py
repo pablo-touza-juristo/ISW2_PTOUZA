@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from . import models
+from .forms import RegistroUsuarioForm
 from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 def index(request):
@@ -25,9 +28,16 @@ class CruiseDetailView(generic.DetailView):
     model = models.Cruise
     context_object_name = 'cruise'
 
-class InfoRequestCreate(SuccessMessageMixin, generic.CreateView):
+class InfoRequestCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     template_name = 'info_request_create.html'
     model = models.InfoRequest
     fields = ['name', 'email', 'cruise', 'notes']
     success_url = reverse_lazy('index')
     success_message = 'Thank you, %(name)s! We will email you when we have more information about %(cruise)s!'
+
+
+class RegistroUsuarioCreate(SuccessMessageMixin, generic.CreateView):
+    template_name = 'registro.html'
+    form_class = RegistroUsuarioForm
+    success_url = reverse_lazy('index')
+    success_message = '¡Registro exitoso! Bienvenido %(username)s.'

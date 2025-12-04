@@ -9,4 +9,14 @@ ReleCloud - Expand your horizons
 <p>
 We are the premier space travel company. We have a scheduled first launch in 2030, but why wait? You can learn more about our destinations, and signup to be notified of our first launch. This is a once in a lifetime experience you certainly don't want to miss!
 </p>
+
+{% if user.is_authenticated %}
+<p>
+    <a href="{% url 'info_request' %}" class="btn btn-primary">Request Information</a>
+</p>
+{% else %}
+<p>
+    <a href="{% url 'login' %}" class="btn btn-primary">Login to Request Information</a>
+</p>
+{% endif %}
 {% endblock content %}

@@ -31,9 +31,24 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'about' %}">About</a>
                 </li>
-                {% comment %} <li class="nav-item">
-                    <a class="nav-link" href="{% url '' %}">Login</a>
-                </li> {% endcomment %}
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <span class="nav-link">Hola, {{ user.username }}</span>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link btn btn-link" style="display: inline; padding: 0; border: none; background: none; color: inherit; cursor: pointer;">Cerrar sesión</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'registro' %}">Registrarse</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </nav>
