@@ -72,3 +72,4 @@ stages:
                     appName: $(webAppName)
                     package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
                     runtimeStack: 'PYTHON|3.12'  # ← Cambio: 3.12
+                    
