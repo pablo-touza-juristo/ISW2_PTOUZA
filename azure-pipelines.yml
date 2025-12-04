@@ -9,7 +9,7 @@ variables:
   vmImageName: 'ubuntu-20.04'
   environmentName: 'Practica'
   projectRoot: $(System.DefaultWorkingDirectory)
-  pythonVersion: '3.13'
+  pythonVersion: '3.12'  # ← Cambio: 3.12 en lugar de 3.13
 
 stages:
   - stage: Build
@@ -19,7 +19,6 @@ stages:
         pool:
           name: 'ISW2_PTOUZA_AgentsPool'
         steps:
-          # ELIMINA UsePythonVersion@0, usa directamente python3
           - script: |
               python3 --version
               pip3 --version
@@ -72,4 +71,4 @@ stages:
                     azureSubscription: $(azureServiceConnectionId)
                     appName: $(webAppName)
                     package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-                    runtimeStack: 'PYTHON|3.13'
+                    runtimeStack: 'PYTHON|3.12'  # ← Cambio: 3.12
