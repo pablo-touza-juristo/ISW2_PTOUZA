@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from django.urls import reverse
 from .models import Destination, Review, Usuario, Cruise, InfoRequest
 from datetime import datetime
 
@@ -551,3 +552,129 @@ class ReviewCalculationTest(TestCase):
         
         avg_rating = self.destination_with_reviews.get_average_rating()
         self.assertEqual(avg_rating, 3.6)
+
+
+class ReviewTemplateTest(TestCase):
+    """
+    Tests para verificar la presentación de reviews en templates
+    """
+    
+    def setUp(self):
+        """Configurar datos de prueba"""
+        # Crear usuario
+        self.user = Usuario.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpass123',
+            first_name='Test',
+            last_name='User'
+        )
+        
+        # Crear destinos
+        self.destination_with_reviews = Destination.objects.create(
+            name='Marte',
+            description='El planeta rojo'
+        )
+        
+        self.destination_without_reviews = Destination.objects.create(
+            name='Venus',
+            description='El planeta del amor'
+        )
+        
+        # Crear reviews para el primer destino
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user,
+            rating=4,
+            comment='Excelente destino'
+        )
+        
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=Usuario.objects.create_user(
+                username='user2',
+                email='user2@example.com',
+                password='pass123'
+            ),
+            rating=5,
+            comment='Increíble experiencia'
+        )
+        
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=Usuario.objects.create_user(
+                username='user3',
+                email='user3@example.com',
+                password='pass123'
+            ),
+            rating=3,
+            comment='Bien pero esperaba más'
+        )
+    
+    def test_destinations_list_shows_rating_and_count_when_reviews_exist(self):
+        """
+        Test: En la lista de destinos, se muestra rating X.X y (N opiniones)
+        """
+        response = self.client.get(reverse('destinations'))
+        self.assertEqual(response.status_code, 200)
+        
+        # Verificar que se muestra el rating promedio (4.0)
+        self.assertContains(response, '4.0')
+        
+        # Verificar que se muestra el conteo de opiniones
+        self.assertContains(response, '3 opiniones')
+    
+    def test_destinations_list_shows_no_reviews_message(self):
+        """
+        Test: En la lista, se muestra 'Sin opiniones' cuando no hay reviews
+        """
+        response = self.client.get(reverse('destinations'))
+        self.assertEqual(response.status_code, 200)
+        
+        # Verificar que se muestra el mensaje "Sin opiniones"
+        self.assertContains(response, 'Sin opiniones')
+    
+    def test_destination_detail_shows_no_reviews_message(self):
+        """
+        Test: En el detalle, se muestra 'Sin opiniones' cuando no hay reviews
+        """
+        response = self.client.get(
+            reverse('destination_detail', kwargs={'pk': self.destination_without_reviews.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        
+        # Verificar que se muestra el mensaje "Sin opiniones"
+        self.assertContains(response, 'Sin opiniones')
+    
+    def test_destination_detail_shows_rating_in_highlighted_block(self):
+        """
+        Test: En el detalle, la media se muestra en un bloque destacado
+        """
+        response = self.client.get(
+            reverse('destination_detail', kwargs={'pk': self.destination_with_reviews.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        
+        # Verificar que se muestra el rating
+        self.assertContains(response, '4.0')
+        
+        # Verificar que el rating está en un elemento destacado (alert, card, badge, etc.)
+        # Buscamos clases comunes de Bootstrap para bloques destacados
+        content = response.content.decode('utf-8')
+        self.assertTrue(
+            'alert' in content or 'card' in content or 'badge' in content or 'highlight' in content,
+            'El rating debería estar en un bloque destacado (alert, card, badge, etc.)'
+        )
+    
+    def test_destination_detail_shows_review_count(self):
+        """
+        Test: En el detalle, se muestra el número de opiniones
+        """
+        response = self.client.get(
+            reverse('destination_detail', kwargs={'pk': self.destination_with_reviews.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        
+        # Verificar que se muestra el conteo
+        self.assertContains(response, '3 opiniones')
+
