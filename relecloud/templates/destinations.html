@@ -17,15 +17,37 @@ If you can imagine it, we travel to it! Below is our list of confirmed destinati
     {% for destination in destinations %}
     <a class="list-group-item list-group-item-action" href="{% url 'destination_detail' destination.id %}">
         <div class="d-flex justify-content-between align-items-center">
-            <span><strong>{{ destination }}</strong></span>
-            <span>
+            <div>
+                <strong>{{ destination }}</strong>
                 {% if destination.avg_rating %}
-                    <span class="badge badge-primary badge-pill">{{ destination.avg_rating }} ⭐</span>
-                    <span class="text-muted small">({{ destination.review_count }} opiniones)</span>
+                    <div class="text-muted small mt-1">
+                        <span class="mr-3">
+                            <strong>⭐ {{ destination.avg_rating|floatformat:1 }}</strong> 
+                            <span class="text-secondary">/5.0</span>
+                        </span>
+                        <span>
+                            📊 <strong>{{ destination.review_count }}</strong> 
+                            {% if destination.review_count == 1 %}opinión{% else %}opiniones{% endif %}
+                        </span>
+                    </div>
+                {% else %}
+                    <div class="text-muted small mt-1">
+                        <em>Sin opiniones todavía</em>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="text-right">
+                {% if destination.avg_rating %}
+                    <span class="badge badge-primary badge-pill" style="font-size: 1rem; padding: 0.5rem 0.75rem;">
+                        {{ destination.avg_rating|floatformat:1 }} ⭐
+                    </span>
+                    <div class="text-muted small mt-1">
+                        {{ destination.review_count }} reviews
+                    </div>
                 {% else %}
                     <span class="badge badge-secondary badge-pill">Sin opiniones</span>
                 {% endif %}
-            </span>
+            </div>
         </div>
     </a>
     {% endfor %}
