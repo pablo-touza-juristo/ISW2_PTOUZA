@@ -7,6 +7,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.db.models import Avg, Count
 
 # Create your views here.
 def index(request):
@@ -16,13 +17,23 @@ def about(request):
     return render(request, 'about.html')
 
 def destinations(request):
-    all_destinations = models.Destination.objects.all()
+    all_destinations = models.Destination.objects.annotate(
+        avg_rating=Avg('reviews__rating'),
+        review_count=Count('reviews')
+    ).all()
     return render(request, 'destinations.html', { 'destinations': all_destinations})
 
 class DestinationDetailView(generic.DetailView):
     template_name = 'destination_detail.html'
     model = models.Destination
     context_object_name = 'destination'
+    
+    def get_queryset(self):
+        """Optimizar query con prefetch de reviews para evitar N+1"""
+        return models.Destination.objects.prefetch_related('reviews__user').annotate(
+            avg_rating=Avg('reviews__rating'),
+            review_count=Count('reviews')
+        )
 
 class CruiseDetailView(generic.DetailView):
     template_name = 'cruise_detail.html'
