@@ -45,24 +45,6 @@ class Destination(models.Model):
     
     def __str__(self):
         return self.name
-    
-    def get_average_rating(self):
-        """Retorna la calificación promedio del destino"""
-        from django.db.models import Avg
-        result = self.reviews.aggregate(Avg('rating'))
-        avg = result['rating__avg']
-        return round(avg, 1) if avg is not None else None
-    
-    def get_review_count(self):
-        """Retorna el número total de reviews"""
-        return self.reviews.count()
-    
-    def get_rating_distribution(self):
-        """Retorna la distribución de calificaciones"""
-        from django.db.models import Count
-        return self.reviews.values('rating').annotate(count=Count('rating')).order_by('-rating')
-
-        return self.name
 
 class Cruise(models.Model):
     name = models.CharField(

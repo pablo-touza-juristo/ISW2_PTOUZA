@@ -351,3 +351,203 @@ class ReviewViewTest(TestCase):
         self.assertEqual(Review.objects.count(), 1)
         review = Review.objects.first()
         self.assertEqual(review.comment, '')
+
+
+class ReviewCalculationTest(TestCase):
+    """Tests para cálculos y conteos de reviews"""
+    
+    def setUp(self):
+        """Configuración inicial para cada test"""
+        # Crear usuarios
+        self.user1 = Usuario.objects.create_user(
+            username='user1',
+            email='user1@example.com',
+            password='testpass123',
+            first_name='User',
+            last_name='One'
+        )
+        
+        self.user2 = Usuario.objects.create_user(
+            username='user2',
+            email='user2@example.com',
+            password='testpass123',
+            first_name='User',
+            last_name='Two'
+        )
+        
+        self.user3 = Usuario.objects.create_user(
+            username='user3',
+            email='user3@example.com',
+            password='testpass123',
+            first_name='User',
+            last_name='Three'
+        )
+        
+        # Crear destinos
+        self.destination_with_reviews = Destination.objects.create(
+            name='Luna',
+            description='Nuestro satélite natural'
+        )
+        
+        self.destination_without_reviews = Destination.objects.create(
+            name='Marte',
+            description='El planeta rojo'
+        )
+    
+    def test_average_rating_with_multiple_reviews(self):
+        """Test: Cálculo correcto del promedio con varias reviews"""
+        # Crear reviews con diferentes calificaciones
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user1,
+            rating=5,
+            comment='Excelente'
+        )
+        
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user2,
+            rating=4,
+            comment='Muy bueno'
+        )
+        
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user3,
+            rating=3,
+            comment='Regular'
+        )
+        
+        # Promedio esperado: (5 + 4 + 3) / 3 = 4.0
+        avg_rating = self.destination_with_reviews.get_average_rating()
+        self.assertEqual(avg_rating, 4.0)
+    
+    def test_average_rating_with_single_review(self):
+        """Test: Promedio correcto con una sola review"""
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user1,
+            rating=5,
+            comment='Perfecto'
+        )
+        
+        avg_rating = self.destination_with_reviews.get_average_rating()
+        self.assertEqual(avg_rating, 5.0)
+    
+    def test_average_rating_rounds_correctly(self):
+        """Test: El promedio se redondea correctamente a 1 decimal"""
+        # Crear reviews que generen un promedio no entero
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user1,
+            rating=5
+        )
+        
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user2,
+            rating=4
+        )
+        
+        # Promedio esperado: (5 + 4) / 2 = 4.5
+        avg_rating = self.destination_with_reviews.get_average_rating()
+        self.assertEqual(avg_rating, 4.5)
+    
+    def test_average_rating_without_reviews_returns_none(self):
+        """Test: Promedio es None cuando no hay reviews"""
+        avg_rating = self.destination_without_reviews.get_average_rating()
+        self.assertIsNone(avg_rating)
+    
+    def test_review_count_with_multiple_reviews(self):
+        """Test: Conteo correcto con múltiples reviews"""
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user1,
+            rating=5
+        )
+        
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user2,
+            rating=4
+        )
+        
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user3,
+            rating=3
+        )
+        
+        count = self.destination_with_reviews.get_review_count()
+        self.assertEqual(count, 3)
+    
+    def test_review_count_with_single_review(self):
+        """Test: Conteo correcto con una sola review"""
+        Review.objects.create(
+            destination=self.destination_with_reviews,
+            user=self.user1,
+            rating=5
+        )
+        
+        count = self.destination_with_reviews.get_review_count()
+        self.assertEqual(count, 1)
+    
+    def test_review_count_without_reviews_returns_zero(self):
+        """Test: Conteo es 0 cuando no hay reviews"""
+        count = self.destination_without_reviews.get_review_count()
+        self.assertEqual(count, 0)
+    
+    def test_rating_distribution(self):
+        """Test: Distribución de calificaciones es correcta"""
+        # Crear reviews con diferentes calificaciones
+        Review.objects.create(destination=self.destination_with_reviews, user=self.user1, rating=5)
+        Review.objects.create(destination=self.destination_with_reviews, user=self.user2, rating=5)
+        Review.objects.create(destination=self.destination_with_reviews, user=self.user3, rating=4)
+        
+        distribution = self.destination_with_reviews.get_rating_distribution()
+        distribution_list = list(distribution)
+        
+        # Verificar que hay 2 reviews con rating 5
+        rating_5 = next((item for item in distribution_list if item['rating'] == 5), None)
+        self.assertIsNotNone(rating_5)
+        self.assertEqual(rating_5['count'], 2)
+        
+        # Verificar que hay 1 review con rating 4
+        rating_4 = next((item for item in distribution_list if item['rating'] == 4), None)
+        self.assertIsNotNone(rating_4)
+        self.assertEqual(rating_4['count'], 1)
+    
+    def test_rating_distribution_without_reviews(self):
+        """Test: Distribución vacía cuando no hay reviews"""
+        distribution = self.destination_without_reviews.get_rating_distribution()
+        self.assertEqual(len(list(distribution)), 0)
+    
+    def test_average_rating_precision_with_many_reviews(self):
+        """Test: Precisión del promedio con muchas reviews"""
+        # Crear reviews: 3x5, 2x4, 1x3, 1x2, 1x1
+        # Promedio: (15 + 8 + 3 + 2 + 1) / 8 = 29 / 8 = 3.625 → 3.6
+        ratings = [5, 5, 5, 4, 4, 3, 2, 1]
+        
+        # Crear usuarios adicionales necesarios
+        extra_users = []
+        for i in range(5):  # Necesitamos 5 usuarios más además de los 3 del setUp
+            user = Usuario.objects.create_user(
+                username=f'user_extra_{i}',
+                email=f'userextra{i}@example.com',
+                password='testpass123',
+                first_name='User',
+                last_name=f'Extra{i}'
+            )
+            extra_users.append(user)
+        
+        all_users = [self.user1, self.user2, self.user3] + extra_users
+        
+        for i, rating in enumerate(ratings):
+            Review.objects.create(
+                destination=self.destination_with_reviews,
+                user=all_users[i],
+                rating=rating
+            )
+        
+        avg_rating = self.destination_with_reviews.get_average_rating()
+        self.assertEqual(avg_rating, 3.6)
