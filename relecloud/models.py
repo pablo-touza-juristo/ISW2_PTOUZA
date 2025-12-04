@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class Usuario(AbstractUser):
@@ -79,3 +80,45 @@ class InfoRequest(models.Model):
         Cruise,
         on_delete=models.PROTECT
     )
+
+
+class Review(models.Model):
+    """
+    Modelo para las opiniones/reviews de los destinos
+    """
+    destination = models.ForeignKey(
+        Destination,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        null=False,
+        blank=False,
+    )
+    user = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        null=False,
+        blank=False,
+    )
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        null=False,
+        blank=False,
+    )
+    comment = models.TextField(
+        max_length=1000,
+        null=False,
+        blank=True,
+        default='',
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Review'
+        verbose_name_plural = 'Reviews'
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.destination.name} ({self.rating}/5)"
