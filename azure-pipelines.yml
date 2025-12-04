@@ -14,7 +14,7 @@ variables:
   webAppName: 'Practica'
 
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  vmImageName: 'ubuntu-20.04'
   
 
   # Environment name
@@ -23,8 +23,8 @@ variables:
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
 
-  pythonVersion: '3.12'
-  pythonPath: '/usr/bin/python3'
+  pythonVersion: '3.13'
+  pythonPath: 'python3'
 
 stages:
 - stage: Build
@@ -68,7 +68,7 @@ stages:
   jobs:
   - deployment: DeploymentJob
     pool:
-      vmImage: $(vmImageName)
+      name: 'ISW2_PTOUZA_AgentsPool'
     environment: $(environmentName)
     strategy:
       runOnce:
