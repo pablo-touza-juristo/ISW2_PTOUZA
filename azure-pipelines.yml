@@ -22,7 +22,7 @@ variables:
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
 
-  pythonVersion: '3.11'
+  pythonVersion: '3.12'
 
 stages:
 - stage: Build
@@ -30,7 +30,8 @@ stages:
   jobs:
   - job: BuildJob
     pool:
-      vmImage: $(vmImageName)
+      name: "ISW2_PTOUZA_AgentsPool"
+      #vmImage: $(vmImageName)
     steps:
     - task: UsePythonVersion@0
       inputs:
