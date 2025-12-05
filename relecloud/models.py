@@ -162,7 +162,13 @@ class Review(models.Model):
     def has_comment(self):
         """Retorna True si la review tiene comentario"""
         return bool(self.comment.strip())
-
+    
+image = models.ImageField(
+    upload_to='destinations/',
+    null=True,
+    blank=True,
+    help_text='Sube una imagen representativa del destino.'
+)
 class Destination(models.Model):
     name = models.CharField(
         unique=True,
