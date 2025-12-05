@@ -10,9 +10,25 @@ ReleCloud - {{ destination }}
 {{ destination.description }}
 </p>
 
+<!-- Bloque destacado con rating -->
+{% if destination.avg_rating %}
+<div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">⭐ Calificación de viajeros</h4>
+    <p class="mb-0">
+        <strong style="font-size: 1.5rem;">{{ destination.avg_rating }}</strong> / 5.0
+        <span class="ml-2 text-muted">(basado en {{ destination.review_count }} opiniones)</span>
+    </p>
+</div>
+{% else %}
+<div class="alert alert-secondary" role="alert">
+    <p class="mb-0">Sin opiniones todavía. ¡Sé el primero en compartir tu experiencia!</p>
+</div>
+{% endif %}
+
 {% if user.is_authenticated %}
 <p>
     <a href="{% url 'info_request' %}" class="btn btn-primary">Request Information</a>
+    <a href="{% url 'review_create' destination.id %}" class="btn btn-outline-secondary">Escribir opinión</a>
 </p>
 {% else %}
 <p>
