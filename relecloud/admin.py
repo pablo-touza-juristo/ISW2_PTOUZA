@@ -1,10 +1,21 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from . import models
 
 # Register your models here.
 admin.site.register(models.Cruise)
-admin.site.register(models.Destination)
+# Destination registered below with decorator
 admin.site.register(models.InfoRequest)
+
+@admin.register(models.Destination)
+class DestinationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'image_preview')
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" width="100" />', obj.image.url)
+        return "Sin imagen"
+    image_preview.short_description = 'Preview'
 
 
 @admin.register(models.Review)

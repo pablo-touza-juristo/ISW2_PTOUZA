@@ -42,6 +42,20 @@ class Destination(models.Model):
         null=False,
         blank=False
     )
+    image = models.ImageField(
+        upload_to='destinations/',
+        null=True,
+        blank=True,
+        help_text='Imagen del destino (opcional)'
+    )
+    
+    @property
+    def image_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        # Placeholder por defecto si no hay imagen
+        # Asegúrate de tener esta imagen en tus static files o usar una URL externa de placeholder
+        return 'https://via.placeholder.com/400x300?text=No+Image'
     
     def __str__(self):
         return self.name
