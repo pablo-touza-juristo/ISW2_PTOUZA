@@ -100,6 +100,9 @@ If you can imagine it, we travel to it! Below is our list of confirmed destinati
                 <div class="destination-name">
                     <strong>{{ destination }}</strong>
                 </div>
+                <div class="destination-image mb-2">
+                    <img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="img-fluid rounded">
+                </div>
                 {% if destination.avg_rating %}
                     <div class="popularity-info d-sm-flex d-none">
                         <span class="text-muted">
