@@ -19,10 +19,10 @@ stages:
         pool:
           name: 'ISW2_PTOUZA_AgentsPool'
         steps:
-          - script: |
-              python3 --version
-              pip3 --version
-            displayName: 'Verificar Python disponible'
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(pythonVersion)'
+            displayName: 'Use Python $(pythonVersion)'
 
           - script: |
               python3 -m venv antenv
@@ -37,7 +37,6 @@ stages:
               python manage.py collectstatic --noinput
             workingDirectory: $(projectRoot)
             displayName: "Collect static files"
-            continueOnError: true
 
           - task: ArchiveFiles@2
             displayName: 'Archive files'
@@ -48,7 +47,7 @@ stages:
               archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
               replaceExistingArchive: true
 
-          - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
             displayName: 'Upload package'
             artifact: drop
 
@@ -71,5 +70,6 @@ stages:
                     azureSubscription: $(azureServiceConnectionId)
                     appName: $(webAppName)
                     package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-                    runtimeStack: 'PYTHON|3.12'  # ← Cambio: 3.12
+                    runtimeStack: 'PYTHON|$(pythonVersion)'
+                    startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 project.wsgi'
                     
