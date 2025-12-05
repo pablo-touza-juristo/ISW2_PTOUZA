@@ -19,11 +19,6 @@ stages:
         pool:
           name: 'ISW2_PTOUZA_AgentsPool'
         steps:
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: '$(pythonVersion)'
-            displayName: 'Use Python $(pythonVersion)'
-
           - script: |
               python3 -m venv antenv
               source antenv/bin/activate
