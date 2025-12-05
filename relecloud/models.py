@@ -45,7 +45,8 @@ class Destination(models.Model):
     image = models.ImageField(
         upload_to='destinations/',
         null=True,
-        blank=True
+        blank=True,
+        help_text='Imagen del destino (opcional)'
     )
     
     @property
