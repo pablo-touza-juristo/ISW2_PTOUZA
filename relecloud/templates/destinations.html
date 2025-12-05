@@ -22,6 +22,22 @@ If you can imagine it, we travel to it! Below is our list of confirmed destinati
                     <span class="badge badge-secondary badge-pill">Sin opiniones</span>
                 {% endif %}
             </span>
+            <div class="destination-image">
+        {% if destination.image %}
+            <img src="{{ destination.image.url }}" alt="{{ destination.name }}" />
+        {% else %}
+            <img src="{% static 'res/img/destination-placeholder.jpg' %}" alt="Placeholder" />
+        {% endif %}
+    </div>
+    <div>
+        <strong>{{ destination }}</strong>
+        {% if destination.avg_rating %}
+            <span class="badge badge-primary badge-pill">{{ destination.avg_rating }} ⭐</span>
+            <span class="text-muted small">({{ destination.review_count }} opiniones)</span>
+        {% else %}
+            <span class="badge badge-secondary badge-pill">Sin opiniones</span>
+        {% endif %}
+    </div>
         </div>
     </a>
     {% endfor %}

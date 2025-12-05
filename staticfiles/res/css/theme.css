@@ -9961,4 +9961,12 @@ body {
   background-color: rgba(192, 75, 242, 0.5) !important;
 }
 
+.destination-image img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
 /*# sourceMappingURL=theme.css.map */

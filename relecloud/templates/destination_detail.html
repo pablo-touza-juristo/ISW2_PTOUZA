@@ -10,6 +10,18 @@ ReleCloud - {{ destination }}
 {{ destination.description }}
 </p>
 
+{% block content %}
+<h1>{{ destination }}</h1>
+<div class="destination-image">
+    {% if destination.image %}
+        <img src="{{ destination.image.url }}" alt="{{ destination.name }}" />
+    {% else %}
+        <img src="{% static 'res/img/destination-placeholder.jpg' %}" alt="Placeholder" />
+    {% endif %}
+</div>
+<p>{{ destination.description }}</p>
+{% endblock %}
+
 <!-- Bloque destacado con rating -->
 {% if destination.avg_rating %}
 <div class="alert alert-info" role="alert">
