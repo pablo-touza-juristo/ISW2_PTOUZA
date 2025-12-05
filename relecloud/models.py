@@ -162,3 +162,30 @@ class Review(models.Model):
     def has_comment(self):
         """Retorna True si la review tiene comentario"""
         return bool(self.comment.strip())
+
+class Destination(models.Model):
+    name = models.CharField(
+        unique=True,
+        max_length=50,
+        null=False,
+        blank=False,
+    )
+    description = models.TextField(
+        max_length=2000,
+        null=False,
+        blank=False
+    )
+    image = models.ImageField(
+        upload_to='destinations/',
+        null=True,
+        blank=True
+    )
+    
+    def __str__(self):
+        return self.name
+    
+    @property
+    def image_url(self):
+        if self.image:
+            return self.image.url
+        return '/static/res/img/placeholder.png'  # Ruta al placeholder
