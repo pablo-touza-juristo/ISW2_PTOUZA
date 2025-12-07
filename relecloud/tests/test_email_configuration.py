@@ -18,21 +18,27 @@ class EmailConfigurationTest(TestCase):
         """
         Test: Verificar que la variable de entorno EMAIL_HOST_USER existe
         """
-        email_user = os.getenv('EMAIL_HOST_USER')
-        self.assertIsNotNone(
-            email_user,
-            "La variable de entorno EMAIL_HOST_USER no está configurada"
-        )
+        try:
+            email_user = config('EMAIL_HOST_USER')
+            self.assertIsNotNone(
+                email_user,
+                "La variable de entorno EMAIL_HOST_USER no está configurada"
+            )
+        except Exception:
+            self.fail("La variable de entorno EMAIL_HOST_USER no está configurada en .env")
     
     def test_email_host_password_env_variable_exists(self):
         """
         Test: Verificar que la variable de entorno EMAIL_HOST_PASSWORD existe
         """
-        email_password = os.getenv('EMAIL_HOST_PASSWORD')
-        self.assertIsNotNone(
-            email_password,
-            "La variable de entorno EMAIL_HOST_PASSWORD no está configurada"
-        )
+        try:
+            email_password = config('EMAIL_HOST_PASSWORD')
+            self.assertIsNotNone(
+                email_password,
+                "La variable de entorno EMAIL_HOST_PASSWORD no está configurada"
+            )
+        except Exception:
+            self.fail("La variable de entorno EMAIL_HOST_PASSWORD no está configurada en .env")
     
     def test_email_host_user_can_be_accessed_from_env(self):
         """
