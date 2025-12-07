@@ -5,23 +5,135 @@ ReleCloud - Destinations
 {% endblock %}
 
 {% block content %}
+<style>
+    /* Estilos responsive para la vista de destinos */
+    .destination-card {
+        transition: background-color 0.2s;
+    }
+    
+    .destination-card:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .destination-name {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .popularity-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+    }
+    
+    .rating-badge {
+        font-size: 1rem;
+        padding: 0.4rem 0.75rem;
+        white-space: nowrap;
+    }
+    
+    .review-count {
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+    
+    /* Móvil: layout vertical */
+    @media (max-width: 576px) {
+        .destination-layout {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        
+        .destination-info {
+            width: 100%;
+            margin-bottom: 0.75rem;
+        }
+        
+        .destination-metrics {
+            width: 100%;
+            text-align: left !important;
+        }
+        
+        .popularity-info {
+            margin-top: 0.5rem;
+        }
+        
+        .rating-badge {
+            font-size: 0.9rem;
+            padding: 0.35rem 0.6rem;
+        }
+    }
+    
+    /* Tablet: mantener horizontal pero compacto */
+    @media (min-width: 577px) and (max-width: 768px) {
+        .destination-name {
+            font-size: 1rem;
+        }
+        
+        .rating-badge {
+            font-size: 0.95rem;
+        }
+    }
+    
+    /* Escritorio: layout completo */
+    @media (min-width: 769px) {
+        .destination-layout {
+            align-items: center;
+        }
+    }
+</style>
+
 <h1>Cruise destinations</h1>
 <p>
 If you can imagine it, we travel to it! Below is our list of confirmed destinations.
 </p>
+<div class="alert alert-info mb-3" role="alert">
+    <i class="bi bi-info-circle"></i>
+    <strong>Ordenados por popularidad:</strong> Los destinos se muestran ordenados según el número de reviews de usuarios y su puntuación media.
+</div>
 <ul class="list-group">
     {% for destination in destinations %}
-    <a class="list-group-item list-group-item-action" href="{% url 'destination_detail' destination.id %}">
-        <div class="d-flex justify-content-between align-items-center">
-            <span><strong>{{ destination }}</strong></span>
-            <span>
+    <a class="list-group-item list-group-item-action destination-card" href="{% url 'destination_detail' destination.id %}">
+        <div class="d-flex justify-content-between destination-layout">
+            <div class="destination-info">
+                <div class="destination-name">
+                    <strong>{{ destination }}</strong>
+                </div>
+                <div class="destination-image mb-2">
+                    <img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="img-fluid rounded">
+                </div>
                 {% if destination.avg_rating %}
-                    <span class="badge badge-primary badge-pill">{{ destination.avg_rating }} ⭐</span>
-                    <span class="text-muted small">({{ destination.review_count }} opiniones)</span>
+                    <div class="popularity-info d-sm-flex d-none">
+                        <span class="text-muted">
+                            <strong>⭐ {{ destination.avg_rating|floatformat:1 }}</strong>
+                            <span class="text-secondary">/5.0</span>
+                        </span>
+                        <span class="text-muted">
+                            📊 <strong>{{ destination.review_count }}</strong>
+                            {% if destination.review_count == 1 %}opinión{% else %}opiniones{% endif %}
+                        </span>
+                    </div>
+                {% else %}
+                    <div class="text-muted small mt-1">
+                        <em>Sin opiniones todavía</em>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="destination-metrics text-right">
+                {% if destination.avg_rating %}
+                    <span class="badge badge-primary badge-pill rating-badge">
+                        {{ destination.avg_rating|floatformat:1 }} ⭐
+                    </span>
+                    <div class="text-muted review-count mt-1">
+                        {{ destination.review_count }} 
+                        <span class="d-none d-md-inline">reviews</span>
+                        <span class="d-md-none">rev</span>
+                    </div>
                 {% else %}
                     <span class="badge badge-secondary badge-pill">Sin opiniones</span>
                 {% endif %}
-            </span>
+            </div>
         </div>
     </a>
     {% endfor %}
