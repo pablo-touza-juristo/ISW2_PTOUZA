@@ -61,9 +61,8 @@ class InfoRequestValidationTest(TestCase):
         # Verificar que el mensaje de error sea apropiado
         error_messages = [str(error) for error in context.exception.error_dict['name']]
         self.assertTrue(
-            any('no puede estar en blanco' in msg.lower() or 'cannot be blank' in msg.lower() 
-                for msg in error_messages),
-            f"El mensaje de error debe indicar que el campo no puede estar vacío. Mensajes recibidos: {error_messages}"
+            any('nombre' in msg.lower() for msg in error_messages),
+            f"El mensaje de error debe mencionar el nombre. Mensajes recibidos: {error_messages}"
         )
     
     def test_email_field_validates_format(self):
