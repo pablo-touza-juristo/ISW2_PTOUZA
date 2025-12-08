@@ -4,12 +4,19 @@ trigger:
   - main
 
 variables:
-  azureServiceConnectionId: '7f7ad899-9c34-4084-9688-637e71d44bec'
-  webAppName: 'Practica'
-  vmImageName: 'ubuntu-20.04'
-  environmentName: 'Practica'
-  projectRoot: $(System.DefaultWorkingDirectory)
-  pythonVersion: '3.12'
+  - group: variables-relecloud
+  - name: azureServiceConnectionId
+    value: '7f7ad899-9c34-4084-9688-637e71d44bec'
+  - name: webAppName
+    value: 'Practica'
+  - name: vmImageName
+    value: 'ubuntu-20.04'
+  - name: environmentName
+    value: 'Practica'
+  - name: projectRoot
+    value: $(System.DefaultWorkingDirectory)
+  - name: pythonVersion
+    value: '3.12'
 
 stages:
   - stage: Build
