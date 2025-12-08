@@ -5,7 +5,7 @@ Siguiendo TDD - estos tests deben fallar inicialmente (fase ROJO)
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.core import mail
-from relecloud.models import InfoRequest
+from relecloud.models import InfoRequest, Usuario, Cruise, Destination
 
 
 class InfoRequestEmailTest(TestCase):
@@ -21,10 +21,36 @@ class InfoRequestEmailTest(TestCase):
         self.client = Client()
         self.url = reverse('info_request')
         
+        # Crear un usuario de prueba (requerido por LoginRequiredMixin)
+        self.user = Usuario.objects.create_user(
+            username='testuser',
+            email='testuser@example.com',
+            password='testpass123',
+            first_name='Test',
+            last_name='User'
+        )
+        
+        # Autenticar al usuario
+        self.client.login(username='testuser', password='testpass123')
+        
+        # Crear un destino de prueba
+        self.destination = Destination.objects.create(
+            name='Marte',
+            description='El planeta rojo'
+        )
+        
+        # Crear un crucero de prueba
+        self.cruise = Cruise.objects.create(
+            name='Viaje a Marte',
+            description='Un increíble viaje al planeta rojo'
+        )
+        self.cruise.destinations.add(self.destination)
+        
         # Datos válidos para el formulario
         self.valid_data = {
             'name': 'Juan Pérez',
             'email': 'juan.perez@example.com',
+            'cruise': self.cruise.id,
             'notes': 'Estoy interesado en el crucero a Marte. ¿Podrían enviarme más información sobre fechas y precios?'
         }
     

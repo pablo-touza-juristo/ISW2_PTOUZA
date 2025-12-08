@@ -2,12 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from . import models
 from .forms import RegistroUsuarioForm, ReviewForm
+from .services import send_info_request_email
 from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db.models import Avg, Count
+import logging
+
+# Configurar logger
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 def index(request):
@@ -46,6 +51,47 @@ class InfoRequestCreate(LoginRequiredMixin, SuccessMessageMixin, generic.CreateV
     fields = ['name', 'email', 'cruise', 'notes']
     success_url = reverse_lazy('index')
     success_message = 'Thank you, %(name)s! We will email you when we have more information about %(cruise)s!'
+    
+    def form_valid(self, form):
+        """
+        Guardar el formulario y enviar correo de notificación.
+        El modelo se guarda siempre, independientemente de si el envío del correo falla.
+        """
+        # Guardar el formulario y obtener la instancia creada
+        response = super().form_valid(form)
+        
+        # Intentar enviar el correo de notificación
+        try:
+            email_sent = send_info_request_email(self.object)
+            
+            if email_sent:
+                # Correo enviado exitosamente
+                logger.info(
+                    f"Correo de notificación enviado para solicitud de información. "
+                    f"ID: {self.object.id}, Usuario: {self.object.name}"
+                )
+            else:
+                # El envío falló pero ya está registrado en el log por el servicio
+                messages.warning(
+                    self.request,
+                    'Tu solicitud ha sido guardada, pero hubo un problema al enviar la notificación por correo.'
+                )
+                
+        except Exception as e:
+            # Error inesperado al intentar enviar el correo
+            # La solicitud ya está guardada, solo notificamos el problema
+            logger.error(
+                f"Error inesperado al intentar enviar correo de notificación. "
+                f"InfoRequest ID: {self.object.id}. Error: {str(e)}"
+            )
+            messages.warning(
+                self.request,
+                'Tu solicitud ha sido guardada, pero hubo un problema al enviar la notificación por correo.'
+            )
+        
+        # Retornar la respuesta original (redirección)
+        # El modelo ya está guardado independientemente del resultado del envío
+        return response
 
 
 class RegistroUsuarioCreate(SuccessMessageMixin, generic.CreateView):
