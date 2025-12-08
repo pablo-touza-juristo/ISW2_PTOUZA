@@ -19,37 +19,65 @@ def send_info_request_email(instance):
     Esta función extrae los datos de la instancia InfoRequest y envía un correo
     electrónico al administrador con la información proporcionada por el usuario.
     
+    El correo se envía de forma síncrona durante el procesamiento de la solicitud.
+    Si el envío falla, la función registra el error en los logs pero NO lanza
+    excepciones, permitiendo que el procesamiento continúe normalmente.
+    
+    Comportamiento en caso de fallo:
+        - El error se registra en los logs mediante logger.error()
+        - Se retorna False para indicar el fallo
+        - NO se lanza ninguna excepción (las excepciones se capturan internamente)
+        - La solicitud en la base de datos NO se ve afectada
+    
     Parameters:
         instance (InfoRequest): Instancia del modelo InfoRequest que contiene
                                 los datos del formulario enviado por el usuario.
-                                Debe tener los campos: name, email, notes
+                                Debe tener los campos: name, email, cruise, notes
     
     Returns:
-        bool: True si el correo se envió exitosamente, False en caso contrario
+        bool: True si el correo se envió exitosamente, False en caso contrario.
+              False puede indicar:
+              - Error de conexión SMTP (SMTPException)
+              - Error de autenticación SMTP
+              - Configuración de correo incorrecta
+              - Cualquier otro error durante el envío
     
-    Raises:
-        SMTPException: Si hay un error al conectar o enviar mediante SMTP
+    Posibles excepciones capturadas internamente:
+        SMTPException: Errores relacionados con SMTP (conexión, autenticación, envío)
         Exception: Cualquier otra excepción no prevista durante el envío
+        
+    Nota:
+        Esta función NO lanza excepciones. Todos los errores son capturados
+        y registrados internamente, retornando False en caso de fallo.
     
     Example:
+        >>> from relecloud.models import InfoRequest, Cruise
+        >>> cruise = Cruise.objects.first()
         >>> info_request = InfoRequest.objects.create(
         ...     name='Juan Pérez',
         ...     email='juan@example.com',
+        ...     cruise=cruise,
         ...     notes='Información sobre cruceros'
         ... )
-        >>> send_info_request_email(info_request)
-        True
+        >>> success = send_info_request_email(info_request)
+        >>> if success:
+        ...     print("Correo enviado exitosamente")
+        ... else:
+        ...     print("Error al enviar correo, revisa los logs")
     """
     try:
-        # Extraer datos de la instancia
+        # Extraer datos de la instancia InfoRequest
+        # Estos campos son validados por el modelo antes de llegar aquí
         nombre = instance.name
         email = instance.email
         mensaje = instance.notes
         
         # Construir el asunto del correo
+        # Este asunto es consistente con los tests y la especificación del PBI
         asunto = 'Nueva solicitud de información'
         
-        # Construir el cuerpo del correo
+        # Construir el cuerpo del correo con formato legible
+        # Incluye toda la información necesaria para el administrador
         cuerpo = f"""
 Has recibido una nueva solicitud de información desde el sitio web de ReleCloud.
 
@@ -65,20 +93,24 @@ Mensaje:
 Este es un mensaje automático generado por el sistema ReleCloud.
         """
         
-        # Obtener el email de notificación desde la configuración
+        # Obtener configuración de correo desde settings.py
+        # NOTIFY_EMAIL: destinatario (administrador)
+        # DEFAULT_FROM_EMAIL: remitente (configurado con EMAIL_HOST_USER)
         email_destino = settings.NOTIFY_EMAIL
         email_remitente = settings.DEFAULT_FROM_EMAIL
         
-        # Enviar el correo
+        # Enviar el correo usando la función send_mail de Django
+        # fail_silently=False: Lanza excepción si hay error (capturada por el try-except)
         send_mail(
             subject=asunto,
             message=cuerpo,
             from_email=email_remitente,
             recipient_list=[email_destino],
-            fail_silently=False  # Lanzar excepción si falla
+            fail_silently=False  # Lanzar excepción si falla para manejo explícito
         )
         
-        # Log de éxito
+        # Registrar el éxito en los logs para auditoría
+        # Útil para verificar que las notificaciones se están enviando correctamente
         logger.info(
             f"Correo de solicitud de información enviado exitosamente. "
             f"Usuario: {nombre} ({email})"
@@ -87,19 +119,27 @@ Este es un mensaje automático generado por el sistema ReleCloud.
         return True
         
     except SMTPException as e:
-        # Error específico de SMTP
+        # Error específico de SMTP (conexión, autenticación, envío)
+        # Estos errores suelen ser temporales o de configuración
+        # Se registran con todos los detalles para facilitar el diagnóstico
         logger.error(
             f"Error SMTP al enviar correo de solicitud de información. "
             f"Usuario: {instance.name} ({instance.email}). "
             f"Error: {str(e)}"
         )
+        # Retornar False para indicar fallo sin lanzar excepción
+        # Esto permite que la vista maneje el error de forma controlada
         return False
         
     except Exception as e:
-        # Cualquier otro error no previsto
+        # Cualquier otro error no previsto durante el envío
+        # Puede incluir: configuración incorrecta, campos faltantes, etc.
+        # Se registra el error completo para debugging
         logger.error(
             f"Error inesperado al enviar correo de solicitud de información. "
             f"Usuario: {instance.name} ({instance.email}). "
             f"Error: {str(e)}"
         )
+        # Retornar False para indicar fallo
+        # La instancia InfoRequest ya está guardada en la BD
         return False
