@@ -20,6 +20,10 @@ import smtplib
 import socket
 import logging
 
+# Configurar logger para este comando
+logger = logging.getLogger(__name__)
+import logging
+
 # Configurar logger para el comando
 logger = logging.getLogger(__name__)
 

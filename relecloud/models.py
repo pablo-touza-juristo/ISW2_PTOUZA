@@ -96,21 +96,69 @@ class Cruise(models.Model):
         return self.name
 
 class InfoRequest(models.Model):
+    """
+    Modelo para solicitudes de información sobre cruceros.
+    Los usuarios completan este formulario para recibir más detalles.
+    """
     name = models.CharField(
         max_length=50,
         null=False,
         blank=False,
+        verbose_name='Nombre completo',
+        help_text='Ingrese su nombre completo (máximo 50 caracteres)',
+        error_messages={
+            'blank': 'Por favor, ingrese su nombre completo.',
+            'null': 'El nombre es obligatorio.',
+            'max_length': 'El nombre no puede tener más de 50 caracteres.',
+            'required': 'El nombre es un campo obligatorio.',
+        }
     )
-    email = models.EmailField()
-    notes = models.TextField(
+    email = models.EmailField(
+        null=False,
+        blank=False,
+        verbose_name='Correo electrónico',
+        help_text='Ingrese un correo electrónico válido',
+        error_messages={
+            'blank': 'Por favor, ingrese su correo electrónico.',
+            'null': 'El correo electrónico es obligatorio.',
+            'invalid': 'Ingrese un correo electrónico válido (ejemplo: usuario@dominio.com).',
+            'required': 'El correo electrónico es un campo obligatorio.',
+        }
+    )
+    notes = models.CharField(
         max_length=2000,
         null=False,
-        blank=False
+        blank=False,
+        verbose_name='Mensaje',
+        help_text='Déjenos su consulta o comentario (máximo 2000 caracteres)',
+        error_messages={
+            'blank': 'Por favor, déjenos un mensaje con su consulta.',
+            'null': 'El mensaje es obligatorio.',
+            'max_length': 'El mensaje no puede tener más de 2000 caracteres.',
+            'required': 'El mensaje es un campo obligatorio.',
+        }
     )
     cruise = models.ForeignKey(
         Cruise,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+        verbose_name='Crucero de interés',
+        help_text='Seleccione el crucero sobre el que desea información',
+        error_messages={
+            'blank': 'Por favor, seleccione un crucero.',
+            'null': 'Debe seleccionar un crucero.',
+            'required': 'Debe seleccionar un crucero de la lista.',
+        }
     )
+    
+    class Meta:
+        verbose_name = 'Solicitud de información'
+        verbose_name_plural = 'Solicitudes de información'
+        ordering = ['-id']  # Más recientes primero
+    
+    def __str__(self):
+        return f"{self.name} - {self.cruise.name}"
 
 
 class Review(models.Model):
