@@ -96,21 +96,46 @@ class Cruise(models.Model):
         return self.name
 
 class InfoRequest(models.Model):
+    """
+    Modelo para solicitudes de información sobre cruceros.
+    Los usuarios completan este formulario para recibir más detalles.
+    """
     name = models.CharField(
         max_length=50,
         null=False,
         blank=False,
+        verbose_name='Nombre completo',
+        help_text='Ingrese su nombre completo (máximo 50 caracteres)'
     )
-    email = models.EmailField()
-    notes = models.TextField(
+    email = models.EmailField(
+        null=False,
+        blank=False,
+        verbose_name='Correo electrónico',
+        help_text='Ingrese un correo electrónico válido'
+    )
+    notes = models.CharField(
         max_length=2000,
         null=False,
-        blank=False
+        blank=False,
+        verbose_name='Mensaje',
+        help_text='Déjenos su consulta o comentario (máximo 2000 caracteres)'
     )
     cruise = models.ForeignKey(
         Cruise,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
+        verbose_name='Crucero de interés',
+        help_text='Seleccione el crucero sobre el que desea información'
     )
+    
+    class Meta:
+        verbose_name = 'Solicitud de información'
+        verbose_name_plural = 'Solicitudes de información'
+        ordering = ['-id']  # Más recientes primero
+    
+    def __str__(self):
+        return f"{self.name} - {self.cruise.name}"
 
 
 class Review(models.Model):
