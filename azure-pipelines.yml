@@ -100,11 +100,3 @@ stages:
                     package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
                     runtimeStack: 'PYTHON|$(pythonVersion)'
                     startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 project.wsgi'
-                    # Configurar variables de entorno en Azure App Service
-                    appSettings: |
-                      -EMAIL_HOST_USER "$(EMAIL_HOST_USER)"
-                      -EMAIL_HOST_PASSWORD "$(EMAIL_HOST_PASSWORD)"
-                      -NOTIFY_EMAIL "$(NOTIFY_EMAIL)"
-                      -SECRET_KEY "$(SECRET_KEY)"
-                      -DJANGO_SETTINGS_MODULE "project.settings"
-                      -PYTHONPATH "/home/site/wwwroot"
