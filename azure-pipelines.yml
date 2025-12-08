@@ -9,7 +9,7 @@ variables:
   vmImageName: 'ubuntu-20.04'
   environmentName: 'Practica'
   projectRoot: $(System.DefaultWorkingDirectory)
-  pythonVersion: '3.12'  # ← Cambio: 3.12 en lugar de 3.13
+  pythonVersion: '3.12'
 
 stages:
   - stage: Build
@@ -26,6 +26,32 @@ stages:
               pip install -r requirements.txt
             workingDirectory: $(projectRoot)
             displayName: "Install requirements"
+
+          # Configurar variables de entorno para desarrollo/testing
+          - script: |
+              echo "Configurando variables de entorno para tests..."
+              echo "EMAIL_HOST_USER=$(EMAIL_HOST_USER)" > .env.test
+              echo "EMAIL_HOST_PASSWORD=$(EMAIL_HOST_PASSWORD)" >> .env.test
+              echo "NOTIFY_EMAIL=$(NOTIFY_EMAIL)" >> .env.test
+              echo "SECRET_KEY=$(SECRET_KEY)" >> .env.test
+            workingDirectory: $(projectRoot)
+            displayName: "Configure environment variables for tests"
+            env:
+              EMAIL_HOST_USER: $(EMAIL_HOST_USER)
+              EMAIL_HOST_PASSWORD: $(EMAIL_HOST_PASSWORD)
+              NOTIFY_EMAIL: $(NOTIFY_EMAIL)
+              SECRET_KEY: $(SECRET_KEY)
+
+          # Ejecutar tests
+          - script: |
+              source antenv/bin/activate
+              # Copiar archivo de variables de entorno de test
+              cp .env.test .env
+              # Ejecutar tests
+              python manage.py test relecloud.tests --verbosity=2
+            workingDirectory: $(projectRoot)
+            displayName: "Run tests"
+            continueOnError: false
 
           - script: |
               source antenv/bin/activate
@@ -67,4 +93,11 @@ stages:
                     package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
                     runtimeStack: 'PYTHON|$(pythonVersion)'
                     startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 project.wsgi'
-                    
+                    # Configurar variables de entorno en Azure App Service
+                    appSettings: |
+                      -EMAIL_HOST_USER "$(EMAIL_HOST_USER)"
+                      -EMAIL_HOST_PASSWORD "$(EMAIL_HOST_PASSWORD)"
+                      -NOTIFY_EMAIL "$(NOTIFY_EMAIL)"
+                      -SECRET_KEY "$(SECRET_KEY)"
+                      -DJANGO_SETTINGS_MODULE "project.settings"
+                      -PYTHONPATH "/home/site/wwwroot"
