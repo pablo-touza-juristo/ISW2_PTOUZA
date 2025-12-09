@@ -51,10 +51,14 @@ class Destination(models.Model):
     
     @property
     def image_url(self):
-        if self.image and hasattr(self.image, 'url'):
-            return self.image.url
+        """Retorna la URL de la imagen del destino o un placeholder si no existe"""
+        try:
+            if self.image and hasattr(self.image, 'url'):
+                return self.image.url
+        except (ValueError, AttributeError):
+            # Si hay algún error al acceder a la imagen, usar placeholder
+            pass
         # Placeholder por defecto si no hay imagen
-        # Asegúrate de tener esta imagen en tus static files o usar una URL externa de placeholder
         return 'https://via.placeholder.com/400x300?text=No+Image'
     
     def __str__(self):

@@ -22,11 +22,21 @@ def about(request):
     return render(request, 'about.html')
 
 def destinations(request):
-    all_destinations = models.Destination.objects.annotate(
-        avg_rating=Avg('reviews__rating'),
-        review_count=Count('reviews')
-    ).order_by('-review_count', '-avg_rating')
-    return render(request, 'destinations.html', { 'destinations': all_destinations})
+    """
+    Vista de listado de destinos con calificaciones y conteo de reviews.
+    Maneja errores de base de datos para evitar crashes.
+    """
+    try:
+        all_destinations = models.Destination.objects.annotate(
+            avg_rating=Avg('reviews__rating'),
+            review_count=Count('reviews')
+        ).order_by('-review_count', '-avg_rating')
+    except Exception as e:
+        # Si hay error (ej: tabla no existe), obtener destinos sin anotaciones
+        logger.error(f"Error al obtener destinos con anotaciones: {e}")
+        all_destinations = models.Destination.objects.all()
+    
+    return render(request, 'destinations.html', {'destinations': all_destinations})
 
 class DestinationDetailView(generic.DetailView):
     template_name = 'destination_detail.html'
