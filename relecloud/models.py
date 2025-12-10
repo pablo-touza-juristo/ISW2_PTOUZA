@@ -59,9 +59,12 @@ class Destination(models.Model):
             'Luna': 'images/destinations/Luna.jpeg',
             'Marte': 'images/destinations/Marte.jpeg',
             'Júpiter': 'images/destinations/Jupiter.jpeg',
+            'Jupiter': 'images/destinations/Jupiter.jpeg',  # Alias sin acento
             'Saturno': 'images/destinations/Saturno.jpeg',
             'Estación Espacial Internacional': 'images/destinations/Estacion Espacial Internacional.jpeg',
+            'Estacion Espacial Internacional': 'images/destinations/Estacion Espacial Internacional.jpeg',  # Sin acento
             'Cinturón de Asteroides': 'images/destinations/Cinturon de Asteroides.jpeg',
+            'Cinturon de Asteroides': 'images/destinations/Cinturon de Asteroides.jpeg',  # Sin acento
         }
         
         # Intentar primero con la imagen del ImageField (por compatibilidad)
