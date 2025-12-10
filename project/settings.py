@@ -89,31 +89,13 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# Detectar si estamos en producción (Azure) o desarrollo (local)
-# Azure App Service establece la variable WEBSITE_HOSTNAME
-if 'WEBSITE_HOSTNAME' in os.environ or config('USE_POSTGRESQL', default=False, cast=bool):
-    # Configuración para producción (PostgreSQL en Azure)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DBNAME'),
-            'HOST': config('DBHOST'),
-            'USER': config('DBUSER'),
-            'PASSWORD': config('DBPASS'),
-            'PORT': config('DBPORT', default='5432'),
-            'OPTIONS': {
-                'sslmode': 'require',
-            },
-        }
+# Configuración para desarrollo local (SQLite)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    # Configuración para desarrollo local (SQLite)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 
 # Password validation
