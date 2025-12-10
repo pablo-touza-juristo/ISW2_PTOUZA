@@ -51,13 +51,30 @@ class Destination(models.Model):
     
     @property
     def image_url(self):
-        """Retorna la URL de la imagen del destino o un placeholder si no existe"""
+        """Retorna la URL de la imagen del destino desde static o un placeholder"""
+        from django.templatetags.static import static
+        
+        # Mapeo de nombres de destinos a archivos de imagen en static
+        IMAGE_MAP = {
+            'Luna': 'images/destinations/Luna.jpeg',
+            'Marte': 'images/destinations/Marte.jpeg',
+            'Júpiter': 'images/destinations/Jupiter.jpeg',
+            'Saturno': 'images/destinations/Saturno.jpeg',
+            'Estación Espacial Internacional': 'images/destinations/Estacion Espacial Internacional.jpeg',
+            'Cinturón de Asteroides': 'images/destinations/Cinturon de Asteroides.jpeg',
+        }
+        
+        # Intentar primero con la imagen del ImageField (por compatibilidad)
         try:
             if self.image and hasattr(self.image, 'url'):
                 return self.image.url
         except (ValueError, AttributeError):
-            # Si hay algún error al acceder a la imagen, usar placeholder
             pass
+        
+        # Buscar imagen en static por nombre del destino
+        if self.name in IMAGE_MAP:
+            return static(IMAGE_MAP[self.name])
+        
         # Placeholder por defecto si no hay imagen
         return 'https://via.placeholder.com/400x300?text=No+Image'
     
