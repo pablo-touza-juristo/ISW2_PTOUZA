@@ -1,0 +1,56 @@
+[
+  {
+    "model": "relecloud.destination",
+    "pk": 1,
+    "fields": {
+      "name": "Luna",
+      "description": "La Luna, nuestro vecino celeste más cercano, ha cautivado a la humanidad durante milenios. Ahora puedes experimentar sus majestuosos paisajes lunares, cráteres impresionantes y la inigualable vista de la Tierra desde la superficie lunar. Camina por los mares de lava solidificada y descubre los secretos que guarda nuestro satélite natural.",
+      "image": ""
+    }
+  },
+  {
+    "model": "relecloud.destination",
+    "pk": 2,
+    "fields": {
+      "name": "Marte",
+      "description": "Marte, el planeta rojo, te invita a explorar sus vastos desiertos, cañones profundos y montañas que superan en altura al Monte Everest. Descubre los misterios de sus antiguos lechos de ríos secos y las formaciones geológicas que sugieren un pasado acuático. Una aventura única en el cuarto planeta del sistema solar.",
+      "image": ""
+    }
+  },
+  {
+    "model": "relecloud.destination",
+    "pk": 3,
+    "fields": {
+      "name": "Jupiter",
+      "description": "Júpiter, el gigante gaseoso del sistema solar, te ofrece un espectáculo sin igual con su icónica Gran Mancha Roja y sus fascinantes bandas de nubes. Observa de cerca sus 79 lunas conocidas, incluyendo las galileanas Ío, Europa, Ganímedes y Calisto. Una experiencia inolvidable en el planeta más masivo de nuestro vecindario cósmico.",
+      "image": ""
+    }
+  },
+  {
+    "model": "relecloud.destination",
+    "pk": 4,
+    "fields": {
+      "name": "Saturno",
+      "description": "Saturno, el señor de los anillos, te espera con sus espectaculares anillos compuestos de hielo y roca. Contempla la belleza de sus hexágonos atmosféricos en el polo norte y explora sus numerosas lunas, incluyendo Titán y Encélado. Un destino que combina majestuosidad y misterio en partes iguales.",
+      "image": ""
+    }
+  },
+  {
+    "model": "relecloud.destination",
+    "pk": 5,
+    "fields": {
+      "name": "Estacion Espacial Internacional",
+      "description": "La Estación Espacial Internacional (ISS) es un laboratorio de investigación en órbita terrestre baja. Experimenta la vida en gravedad cero, observa la Tierra desde 400 km de altura y participa en experimentos científicos de vanguardia. Una experiencia única para vivir como un verdadero astronauta.",
+      "image": ""
+    }
+  },
+  {
+    "model": "relecloud.destination",
+    "pk": 6,
+    "fields": {
+      "name": "Cinturon de Asteroides",
+      "description": "El Cinturón de Asteroides, ubicado entre Marte y Júpiter, alberga millones de rocas espaciales de todos los tamaños. Navega entre estos restos del sistema solar primitivo, visita los asteroides más grandes como Ceres, Vesta y Pallas, y descubre los secretos de la formación planetaria.",
+      "image": ""
+    }
+  }
+]

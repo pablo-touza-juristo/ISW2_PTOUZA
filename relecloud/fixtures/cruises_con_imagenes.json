@@ -1,0 +1,56 @@
+[
+  {
+    "model": "relecloud.cruise",
+    "pk": 1,
+    "fields": {
+      "name": "Viaje Express a la Luna",
+      "description": "Un viaje rápido de fin de semana a nuestro satélite natural. Perfecto para quienes quieren experimentar el espacio por primera vez.",
+      "destinations": [1]
+    }
+  },
+  {
+    "model": "relecloud.cruise",
+    "pk": 2,
+    "fields": {
+      "name": "Expedición a Marte",
+      "description": "Conviértete en uno de los primeros exploradores del planeta rojo. Incluye visitas a Olympus Mons y los casquetes polares.",
+      "destinations": [2]
+    }
+  },
+  {
+    "model": "relecloud.cruise",
+    "pk": 3,
+    "fields": {
+      "name": "Tour de los Gigantes",
+      "description": "Visita los planetas más impresionantes del sistema solar: Júpiter y Saturno. Observa la Gran Mancha Roja y los anillos de Saturno de cerca.",
+      "destinations": [3, 4]
+    }
+  },
+  {
+    "model": "relecloud.cruise",
+    "pk": 4,
+    "fields": {
+      "name": "Vida en Órbita - ISS",
+      "description": "Experimenta la vida de un astronauta en la Estación Espacial Internacional. Vive en gravedad cero y observa la Tierra desde el espacio.",
+      "destinations": [5]
+    }
+  },
+  {
+    "model": "relecloud.cruise",
+    "pk": 5,
+    "fields": {
+      "name": "Safari del Cinturón de Asteroides",
+      "description": "Navega entre los asteroides y descubre los secretos de la formación del sistema solar. Incluye visita a Ceres.",
+      "destinations": [6]
+    }
+  },
+  {
+    "model": "relecloud.cruise",
+    "pk": 6,
+    "fields": {
+      "name": "Gran Tour del Sistema Solar",
+      "description": "El viaje definitivo: visita todos nuestros destinos en una única expedición épica. De la Luna al Cinturón de Asteroides.",
+      "destinations": [1, 2, 3, 4, 5, 6]
+    }
+  }
+]
