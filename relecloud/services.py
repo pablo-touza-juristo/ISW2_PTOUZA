@@ -99,7 +99,7 @@ Este es un mensaje automático generado por el sistema ReleCloud.
         email_destino = settings.NOTIFY_EMAIL
         email_remitente = settings.DEFAULT_FROM_EMAIL
         
-        # Enviar el correo usando la función send_mail de Django
+        # Enviar el correo al administrador usando la función send_mail de Django
         # fail_silently=False: Lanza excepción si hay error (capturada por el try-except)
         send_mail(
             subject=asunto,
@@ -109,10 +109,43 @@ Este es un mensaje automático generado por el sistema ReleCloud.
             fail_silently=False  # Lanzar excepción si falla para manejo explícito
         )
         
+        # Enviar correo de confirmación al usuario
+        asunto_confirmacion = 'Confirmación de solicitud de información - ReleCloud'
+        cuerpo_confirmacion = f"""
+Hola {nombre},
+
+Gracias por contactar con ReleCloud. Hemos recibido tu solicitud de información correctamente.
+
+Detalles de tu solicitud:
+-------------------------
+Crucero: {instance.cruise.name}
+Mensaje enviado: {mensaje}
+
+-------------------------
+Nuestro equipo revisará tu solicitud y te responderemos a la brevedad posible a esta dirección de correo.
+
+¡Gracias por confiar en ReleCloud para tu próxima aventura espacial!
+
+Saludos,
+El equipo de ReleCloud
+
+-------------------------
+Este es un mensaje automático, por favor no respondas a este correo.
+        """
+        
+        # Enviar correo de confirmación al usuario
+        send_mail(
+            subject=asunto_confirmacion,
+            message=cuerpo_confirmacion,
+            from_email=email_remitente,
+            recipient_list=[email],  # Enviar al email del usuario
+            fail_silently=False
+        )
+        
         # Registrar el éxito en los logs para auditoría
         # Útil para verificar que las notificaciones se están enviando correctamente
         logger.info(
-            f"Correo de solicitud de información enviado exitosamente. "
+            f"Correos enviados exitosamente (admin + confirmación usuario). "
             f"Usuario: {nombre} ({email})"
         )
         
