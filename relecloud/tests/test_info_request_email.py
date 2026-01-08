@@ -56,8 +56,10 @@ class InfoRequestEmailTest(TestCase):
     
     def test_email_sent_when_form_submitted_with_valid_data(self):
         """
-        Test: Verificar que se envía exactamente 1 correo cuando el formulario
-        se envía con datos válidos mediante método HTTP POST
+        Test: Verificar que se envían exactamente 2 correos cuando el formulario
+        se envía con datos válidos mediante método HTTP POST:
+        - 1 correo al administrador
+        - 1 correo de confirmación al usuario
         """
         # Limpiar la bandeja de salida antes del test
         mail.outbox = []
@@ -65,11 +67,11 @@ class InfoRequestEmailTest(TestCase):
         # Enviar formulario con datos válidos
         response = self.client.post(self.url, self.valid_data)
         
-        # Verificar que se envió exactamente 1 correo
+        # Verificar que se enviaron exactamente 2 correos
         self.assertEqual(
             len(mail.outbox),
-            1,
-            "Debe enviarse exactamente 1 correo cuando se envía el formulario con datos válidos"
+            2,
+            "Deben enviarse exactamente 2 correos: uno al admin y otro de confirmación al usuario"
         )
     
     def test_email_subject_is_correct(self):
